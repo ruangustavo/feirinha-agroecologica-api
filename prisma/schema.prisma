@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum QuantityInStock {
+  KG
+  UNITY
+}
+
+model Image {
+  id      String    @id @default(cuid())
+  path    String
+  Product Product[]
+}
+
+model Product {
+  id              String          @id @default(cuid())
+  name            String
+  price           Decimal
+  description     String
+  images          Image           @relation(fields: [imageId], references: [id])
+  imageId         String
+  quantityInStock QuantityInStock
+  createdAt       DateTime        @default(now())
+}
+
+model User {
+  id       String @id @default(cuid())
+  email    String @unique
+  password String
+}
