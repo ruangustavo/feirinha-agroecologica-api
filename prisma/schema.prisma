@@ -7,28 +7,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum QuantityInStock {
+enum StockUnit {
   KG
   UNITY
 }
 
-model Image {
-  id      String    @id @default(cuid())
-  path    String
-  Product Product[]
-}
-
 model Product {
-  id              String          @id @default(cuid())
-  name            String
-  price           Decimal
-  description     String
-  images          Image           @relation(fields: [imageId], references: [id])
-  imageId         String
-  quantityInStock QuantityInStock
-  order           Order           @relation(fields: [orderId], references: [id])
-  orderId         String
-  createdAt       DateTime        @default(now())
+  id            String         @id @default(cuid())
+  name          String
+  price         Decimal
+  description   String
+  image         String
+  stockUnit     StockUnit
+  stockQuantity Int
+  createdAt     DateTime       @default(now())
+  orderProduct  OrderProduct[]
 }
 
 model User {
@@ -48,6 +41,17 @@ enum OrderPaymentMethod {
   MONEY
 }
 
+model OrderProduct {
+  id String @id @default(cuid())
+
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   String
+
+  createdAt DateTime @default(now())
+}
+
 model Order {
   id String @id @default(cuid())
 
@@ -63,10 +67,10 @@ model Order {
   phoneNumber String
 
   // Product related
-  products      Product[]
   total         Decimal
-  status        OrderStatus
+  status        OrderStatus        @default(PENDING)
   paymentMethod OrderPaymentMethod
 
-  createdAt DateTime @default(now())
+  createdAt    DateTime       @default(now())
+  orderProduct OrderProduct[]
 }
