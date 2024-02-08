@@ -43,6 +43,11 @@ enum OrderStatus {
   CANCELED
 }
 
+enum OrderPaymentMethod {
+  PIX
+  MONEY
+}
+
 model Order {
   id String @id @default(cuid())
 
@@ -58,8 +63,10 @@ model Order {
   phoneNumber String
 
   // Product related
-  products  Product[]
-  total     Decimal
-  status    OrderStatus
-  createdAt DateTime    @default(now())
+  products      Product[]
+  total         Decimal
+  status        OrderStatus
+  paymentMethod OrderPaymentMethod
+
+  createdAt DateTime @default(now())
 }
