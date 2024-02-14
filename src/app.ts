@@ -1,11 +1,12 @@
 import Fastify from 'fastify'
+import { productRoutes } from './routes/product.route'
 
 export function buildFastify(opts = {}) {
-  const fastify = Fastify(opts)
+  const app = Fastify(opts)
 
-  fastify.get('/', function (request, reply) {
-    reply.send({ hello: 'world' })
+  app.register(productRoutes, {
+    prefix: '/api/products',
   })
 
-  return fastify
+  return app
 }
