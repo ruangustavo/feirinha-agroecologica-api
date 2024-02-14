@@ -4,6 +4,7 @@ import { ProductService } from '@/services/product.service'
 import { FastifyInstance } from 'fastify'
 
 function makeProductController() {
+  // NOTE: inversão de dependência
   const productRepository = new PrismaProductRepository()
   const productService = new ProductService(productRepository)
   const productController = new ProductController(productService)
@@ -13,5 +14,6 @@ function makeProductController() {
 export async function productRoutes(app: FastifyInstance) {
   const productController = makeProductController()
 
-  app.get('', async (req, reply) => productController.fetchAll(req, reply))
+  app.get('', async () => productController.fetchAll())
+  app.post('', async (req) => productController.create(req))
 }
