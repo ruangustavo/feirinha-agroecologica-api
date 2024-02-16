@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx --watch ./src/server.ts",
-    "test": "tap"
+    "test": "vitest run",
+    "test:watch": "vitest dev"
   },
   "keywords": [],
   "author": "",
@@ -18,7 +19,8 @@
     "prisma": "^5.9.1",
     "tap": "^18.7.0",
     "tsx": "^4.7.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.2"
   },
   "dependencies": {
     "@prisma/client": "5.9.1",

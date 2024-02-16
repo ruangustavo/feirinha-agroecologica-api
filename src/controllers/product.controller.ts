@@ -1,4 +1,4 @@
-import { IProductService } from '@/services/product.service'
+import { IProductService } from 'src/services/product.service'
 import { FastifyRequest } from 'fastify'
 import { z } from 'zod'
 

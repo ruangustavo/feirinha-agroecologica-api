@@ -8,8 +8,7 @@ const fastify = buildFastify({
     },
   },
 })
-
-fastify.listen({ port: 3000 ?? process.env.PORT }, (err, address) => {
+fastify.listen({ port: process.env.PORT || 3000 }, (err) => {
   if (err) {
     fastify.log.error(err)
     process.exit(1)

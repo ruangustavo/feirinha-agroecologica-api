@@ -25,3 +25,5 @@ export function buildFastify(opts = {}) {
 
   return app
 }
+
+export default buildFastify();

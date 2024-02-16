@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma'
+import { prisma } from 'src/lib/prisma'
 import { ProductRepository } from '../product.repository'
 import { Prisma } from '@prisma/client'
 
@@ -27,5 +27,19 @@ export class PrismaProductRepository implements ProductRepository {
       },
     })
     return product
+  }
+
+  async delete(id: number) {
+    const product = await prisma.product.delete({
+      where: {
+        id: String(id), // Prisma expects a string here GOOD PRACTICE?
+      },
+    })
+    return product
+  }
+
+  async count(){
+    const count = await prisma.product.count()
+    return count
   }
 }
