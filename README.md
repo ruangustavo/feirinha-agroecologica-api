@@ -15,6 +15,11 @@ docker compose up -d
 ```
 
 ### Running
+Copy the .env.example
+
+```
+cp .env.example .env
+```
 
 Provide Execution Permission
 
