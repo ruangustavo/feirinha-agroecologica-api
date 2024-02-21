@@ -38,7 +38,7 @@ export class PrismaProductRepository implements ProductRepository {
     return product
   }
 
-  async count(){
+  async count() {
     const count = await prisma.product.count()
     return count
   }

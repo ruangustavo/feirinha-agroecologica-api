@@ -1,4 +1,4 @@
-import Fastify from 'fastify'
+import Fastify, { FastifyReply, FastifyRequest } from 'fastify'
 
 import { productRoutes } from './routes/product.route'
 import { userRoutes } from './routes/user.route'
@@ -7,7 +7,7 @@ import { userSchemas } from './schemas/user.schema'
 
 import { ZodError } from 'zod'
 
-import fjwt from '@fastify/jwt'
+import fjwt, { FastifyJWT } from '@fastify/jwt'
 import fCookie from '@fastify/cookie'
 import multipart from '@fastify/multipart'
 
@@ -39,6 +39,19 @@ export function buildFastify(opts = {}) {
 
     return reply.status(500).send({ message: 'Internal server error.' })
   })
+
+  app.decorate(
+    'authenticate',
+    async (req: FastifyRequest, reply: FastifyReply) => {
+      const token = req.cookies.access_token
+      if (!token) {
+        return reply.status(401).send({ message: 'Authentication required' })
+      }
+      // here decoded will be a different type by default but we want it to be of user-payload type
+      const decoded = req.jwt.verify<FastifyJWT['user']>(token)
+      req.user = decoded
+    },
+  )
 
   // register jwt (auth module)
   app.register(fjwt, { secret: 'supersecretcode-CHANGE_THIS-USE_ENV_FILE' })
