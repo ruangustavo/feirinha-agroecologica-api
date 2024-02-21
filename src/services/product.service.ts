@@ -1,10 +1,24 @@
 import { ProductRepository } from '../repositories/product.repository'
-import { Prisma, Product } from '@prisma/client'
+import { Product, StockUnit } from '@prisma/client'
+import fs from 'fs'
+import util from 'util'
+import { pipeline } from 'stream'
+import { BusboyFileStream } from '@fastify/busboy'
+import { randomUUID } from 'crypto'
 
 export interface IProductService {
   fetchAll(): Promise<Product[]>
-  create(product: Prisma.ProductCreateInput): Promise<Product>
+  create(product: {
+    description: string
+    name: string
+    price: number
+    stockUnit: StockUnit
+    stockQuantity: number
+    imageData: BusboyFileStream
+  }): Promise<Product>
 }
+
+const pump = util.promisify(pipeline)
 
 export class ProductService implements IProductService {
   constructor(private readonly productRepository: ProductRepository) {}
@@ -14,24 +28,31 @@ export class ProductService implements IProductService {
     return products
   }
 
-  // NOTE: tem uma razão pra fazer desestruturação do objeto
-  // NOTE: caso um usuário malicioso envie um objeto com propriedades a mais (tipo "id")
-  // NOTE: vai dar um erro de integridade no banco de dados
   async create({
     description,
-    image,
+    imageData,
     name,
     price,
-    stockQuantity,
     stockUnit,
-  }: Prisma.ProductCreateInput) {
+    stockQuantity,
+  }: {
+    description: string
+    name: string
+    price: number
+    stockUnit: StockUnit
+    stockQuantity: number
+    imageData: BusboyFileStream
+  }) {
+    const path = `./products/${randomUUID()}.png`
+    await pump(imageData, fs.createWriteStream(path))
+
     const product = await this.productRepository.create({
       description,
-      image,
       name,
       price,
       stockQuantity,
       stockUnit,
+      image: path,
     })
     return product
   }

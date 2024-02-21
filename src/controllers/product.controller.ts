@@ -11,25 +11,56 @@ export class ProductController {
   }
 
   async create(req: FastifyRequest) {
-    const createProductBodySchema = z.object({
-      name: z.string().min(3),
-      price: z.number().positive(),
-      description: z.string(),
-      image: z.string(),
-      stockUnit: z.enum(['KG', 'UNITY']),
-      stockQuantity: z.number().min(1),
-    })
+    const parts = await req.file()
+    const { file: imageData } = parts ?? {}
 
-    const { name, price, description, image, stockQuantity, stockUnit } =
-      createProductBodySchema.parse(req.body)
+    if (!imageData) {
+      return { message: 'Image is required.' }
+    }
+
+    const createProductBodySchema = z
+      .object({
+        name: z.object({
+          value: z.string().min(3),
+        }),
+        price: z.object({
+          value: z.coerce.number(),
+        }),
+        description: z.object({
+          value: z.string().min(3),
+        }),
+        stockUnit: z.object({
+          value: z.enum(['KG', 'UNITY']),
+        }),
+        stockQuantity: z.object({
+          value: z.coerce.number().min(1),
+        }),
+      })
+      .transform(({ name, price, description, stockUnit, stockQuantity }) => {
+        return {
+          name: name.value,
+          price: price.value,
+          description: description.value,
+          stockUnit: stockUnit.value,
+          stockQuantity: stockQuantity.value,
+        }
+      })
+
+    const { fields } = parts ?? {}
+    if (!fields) {
+      return { message: 'Fields are required.' }
+    }
+
+    const { name, price, description, stockQuantity, stockUnit } =
+      createProductBodySchema.parse(fields)
 
     const product = await this.productService.create({
       name,
       price,
       description,
-      image,
       stockQuantity,
       stockUnit,
+      imageData,
     })
 
     return product

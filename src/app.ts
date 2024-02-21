@@ -1,10 +1,12 @@
 import Fastify from 'fastify'
 import { productRoutes } from './routes/product.route'
 import { ZodError } from 'zod'
+import multipart from '@fastify/multipart'
 
 export function buildFastify(opts = {}) {
   const app = Fastify(opts)
 
+  app.register(multipart)
   app.register(productRoutes, {
     prefix: '/api/products',
   })
@@ -26,4 +28,4 @@ export function buildFastify(opts = {}) {
   return app
 }
 
-export default buildFastify();
+export default buildFastify()
