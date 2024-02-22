@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "tsx --watch ./src/server.ts",
     "test": "vitest run",
-    "test:watch": "vitest dev"
+    "test:watch": "vitest dev",
+    "lint:fix": "eslint --fix src/**/*.ts"
   },
   "keywords": [],
   "author": "",
