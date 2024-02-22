@@ -54,7 +54,7 @@ export function buildFastify(opts = {}) {
   )
 
   // register jwt (auth module)
-  app.register(fjwt, { secret: 'supersecretcode-CHANGE_THIS-USE_ENV_FILE' })
+  app.register(fjwt, { secret: process.env.JWT_SECRET })
 
   // auth module
   app.addHook('preHandler', (req, res, next) => {
@@ -64,7 +64,7 @@ export function buildFastify(opts = {}) {
 
   // cookies (auth module)
   app.register(fCookie, {
-    secret: 'some-secret-key',
+    secret: process.env.COOKIE_SECRET,
     hook: 'preHandler',
   })
 
