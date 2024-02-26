@@ -54,7 +54,7 @@ export function buildFastify(opts = {}) {
   )
 
   // register jwt (auth module)
-  app.register(fjwt, { secret: process.env.JWT_SECRET })
+  app.register(fjwt, { secret: process.env.JWT_SECRET as string })
 
   // auth module
   app.addHook('preHandler', (req, res, next) => {

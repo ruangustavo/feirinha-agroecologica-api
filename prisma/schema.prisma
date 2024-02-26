@@ -15,7 +15,7 @@ enum StockUnit {
 model Product {
   id            String         @id @default(cuid())
   name          String
-  price         Decimal
+  price         Float
   description   String
   image         String
   stockUnit     StockUnit
