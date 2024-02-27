@@ -29,10 +29,10 @@ export class PrismaProductRepository implements ProductRepository {
     return product
   }
 
-  async delete(id: number) {
+  async delete(id: string) {
     const product = await prisma.product.delete({
       where: {
-        id: String(id), // Prisma expects a string here GOOD PRACTICE?
+        id,
       },
     })
     return product

@@ -3,15 +3,39 @@ import app from '../src/app'
 import { PrismaProductRepository } from 'src/repositories/prisma/prisma-product.repository'
 import formAutoContent from 'form-auto-content'
 import fs from 'fs'
+import { prisma } from 'src/lib/prisma'
 
 test('Test GET products', async () => {
+  const product = formAutoContent({
+    name: 'Batata',
+    price: 10,
+    description: 'Descrição da batata',
+    stockUnit: 'UNITY',
+    stockQuantity: 10,
+    image: fs.createReadStream(`./tests/mock/batata.jpg`),
+  })
+
+  const postResponse = await app.inject({
+    method: 'POST',
+    url: '/api/products',
+    ...product,
+  })
+
+  const pid = postResponse.json().id
+
   const response = await app.inject({
     method: 'GET',
     url: '/api/products',
   })
 
   expect(response.statusCode).toBe(200)
-  expect(response.json()).toEqual([])
+  expect(response.json()).toEqual([postResponse.json()])
+
+  await prisma.product.delete({
+    where: {
+      id: pid,
+    },
+  })
 })
 
 test('Test POST products', async () => {
