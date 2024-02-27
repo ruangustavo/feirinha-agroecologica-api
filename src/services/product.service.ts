@@ -52,7 +52,7 @@ export class ProductService implements IProductService {
       price,
       stockQuantity,
       stockUnit,
-      image: path,
+      imageUrl: path,
     })
     return product
   }

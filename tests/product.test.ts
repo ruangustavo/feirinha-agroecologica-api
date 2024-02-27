@@ -12,7 +12,7 @@ test('Test GET products', async () => {
     description: 'Descrição da batata',
     stockUnit: 'UNITY',
     stockQuantity: 10,
-    image: fs.createReadStream(`./tests/mock/batata.jpg`),
+    imageUrl: fs.createReadStream(`./tests/mock/batata.jpg`),
   })
 
   const postResponse = await app.inject({
@@ -47,13 +47,13 @@ test('Test POST products', async () => {
     description: 'Descrição da batata',
     stockUnit: 'UNITY',
     stockQuantity: 10,
-    image: fs.createReadStream(`./tests/mock/batata.jpg`),
+    imageUrl: fs.createReadStream(`./tests/mock/batata.jpg`),
   })
 
   const expectedProduct = {
     id: expect.any(String),
     name: 'Batata',
-    image: expect.any(String),
+    imageUrl: expect.any(String),
     price: 10,
     description: 'Descrição da batata',
     stockQuantity: 10,

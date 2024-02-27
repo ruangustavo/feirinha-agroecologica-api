@@ -12,7 +12,7 @@ export class PrismaProductRepository implements ProductRepository {
     name,
     price,
     description,
-    image,
+    imageUrl,
     stockQuantity,
     stockUnit,
   }: Prisma.ProductCreateInput) {
@@ -21,7 +21,7 @@ export class PrismaProductRepository implements ProductRepository {
         name,
         price,
         description,
-        image,
+        imageUrl,
         stockQuantity,
         stockUnit,
       },
