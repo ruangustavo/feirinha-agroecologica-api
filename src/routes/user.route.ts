@@ -13,7 +13,7 @@ function makeUserController() {
 export async function userRoutes(app: FastifyInstance) {
   const userController = makeUserController()
 
-  app.get('/', (req: FastifyRequest, reply: FastifyReply) => {
+  app.get('/', (req, reply) => {
     reply.send({ message: '/ route hit' })
   })
 

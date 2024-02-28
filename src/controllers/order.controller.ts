@@ -49,4 +49,8 @@ export class OrderController {
 
     return createOrder
   }
+
+  async getOrders() {
+    return await this.orderService.getOrders()
+  }
 }

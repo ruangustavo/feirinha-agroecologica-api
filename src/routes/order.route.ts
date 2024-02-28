@@ -16,4 +16,9 @@ export async function orderRoutes(app: FastifyInstance) {
     const createdOrder = await orderController.createOrder(req)
     reply.status(201).send(createdOrder)
   })
+
+  app.get('/', async (_req, reply) => {
+    const orders = await orderController.getOrders()
+    reply.send(orders)
+  })
 }

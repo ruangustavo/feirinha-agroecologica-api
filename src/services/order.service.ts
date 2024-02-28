@@ -6,6 +6,7 @@ type CreateOrderRequest = Prisma.OrderCreateInput & { products: Product[] }
 
 export interface IOrderService {
   createOrder(order: CreateOrderRequest): Promise<Order>
+  getOrders(): Promise<Order[]>
 }
 
 export class OrderService implements IOrderService {
@@ -75,5 +76,10 @@ export class OrderService implements IOrderService {
     }
 
     return orderCreated
+  }
+
+  async getOrders() {
+    const orders = await prisma.order.findMany()
+    return orders
   }
 }
