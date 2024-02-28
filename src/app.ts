@@ -10,6 +10,7 @@ import { ZodError } from 'zod'
 import fjwt, { FastifyJWT } from '@fastify/jwt'
 import fCookie from '@fastify/cookie'
 import multipart from '@fastify/multipart'
+import { orderRoutes } from './routes/order.route'
 
 export function buildFastify(opts = {}) {
   const app = Fastify(opts)
@@ -25,6 +26,7 @@ export function buildFastify(opts = {}) {
   app.register(userRoutes, { prefix: 'api/users' })
   app.register(multipart)
   app.register(productRoutes, { prefix: '/api/products' })
+  app.register(orderRoutes, { prefix: '/api/orders' })
 
   app.setErrorHandler((error, _, reply) => {
     if (error instanceof ZodError) {

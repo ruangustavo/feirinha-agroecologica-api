@@ -49,6 +49,7 @@ model OrderProduct {
   order     Order   @relation(fields: [orderId], references: [id])
   orderId   String
 
+  quantity  Int
   createdAt DateTime @default(now())
 }
 
@@ -67,7 +68,7 @@ model Order {
   phoneNumber String
 
   // Product related
-  total         Decimal
+  total         Float?
   status        OrderStatus        @default(PENDING)
   paymentMethod OrderPaymentMethod
 
