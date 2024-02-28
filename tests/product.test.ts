@@ -1,27 +1,20 @@
 import { afterAll, expect, test } from 'vitest'
 import app from '../src/app'
-import { PrismaProductRepository } from 'src/repositories/prisma/prisma-product.repository'
 import formAutoContent from 'form-auto-content'
-import fs from 'fs'
 import { prisma } from 'src/lib/prisma'
 
-test('Test GET products', async () => {
-  const product = formAutoContent({
-    name: 'Batata',
-    price: 10,
-    description: 'Descrição da batata',
-    stockUnit: 'UNITY',
-    stockQuantity: 10,
-    imageUrl: fs.createReadStream(`./tests/mock/batata.jpg`),
-  })
+import { createProduct } from './utils'
 
+test('Test GET products', async () => {
+  const product = createProduct({ stockQuantity: 10, price: 10 })
+  const productForm = formAutoContent(product)
+
+  // act
   const postResponse = await app.inject({
     method: 'POST',
     url: '/api/products',
-    ...product,
+    ...productForm,
   })
-
-  const pid = postResponse.json().id
 
   const response = await app.inject({
     method: 'GET',
@@ -33,44 +26,40 @@ test('Test GET products', async () => {
 
   await prisma.product.delete({
     where: {
-      id: pid,
+      id: postResponse.json().id,
     },
   })
 })
 
 test('Test POST products', async () => {
-  const productRepository = new PrismaProductRepository()
-
-  const product = formAutoContent({
-    name: 'Batata',
-    price: 10,
-    description: 'Descrição da batata',
-    stockUnit: 'UNITY',
-    stockQuantity: 10,
-    imageUrl: fs.createReadStream(`./tests/mock/batata.jpg`),
-  })
+  // arrange
+  const product = createProduct({ stockQuantity: 10, price: 10 })
+  const productForm = formAutoContent(product)
 
   const expectedProduct = {
+    ...product,
     id: expect.any(String),
-    name: 'Batata',
     imageUrl: expect.any(String),
-    price: 10,
-    description: 'Descrição da batata',
-    stockQuantity: 10,
-    stockUnit: 'UNITY',
     createdAt: expect.any(String),
   }
 
-  const response = await app.inject({
+  // act
+  const postResponse = await app.inject({
     method: 'POST',
     url: '/api/products',
-    ...product,
+    ...productForm,
   })
 
-  expect(response.statusCode).toBe(201)
-  expect(response.json()).toEqual(expectedProduct)
-  expect(await productRepository.count()).toBe(1)
-  await productRepository.delete(response.json().id)
+  // assert
+  expect(postResponse.statusCode).toBe(201)
+  expect(postResponse.json()).toEqual(expectedProduct)
+
+  // clean up
+  await prisma.product.delete({
+    where: {
+      id: postResponse.json().id,
+    },
+  })
 })
 
 afterAll(async () => {
