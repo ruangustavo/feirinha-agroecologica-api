@@ -1,20 +1,10 @@
 import { afterAll, expect, test } from 'vitest'
-import formAutoContent from 'form-auto-content'
-import fs from 'fs'
 import app from 'src/app'
 import { prisma } from 'src/lib/prisma'
 import { Order } from '@prisma/client'
+import formAutoContent from 'form-auto-content'
 
-function createProduct({ stockQuantity }: { stockQuantity: number }) {
-  return formAutoContent({
-    name: 'any_product',
-    price: 10,
-    description: 'any_description',
-    stockUnit: 'UNITY',
-    stockQuantity,
-    imageUrl: fs.createReadStream(`./tests/mock/batata.jpg`),
-  })
-}
+import { createProduct, createOrder } from './utils'
 
 test('Test GET orders', async () => {
   // Arrange
@@ -24,37 +14,22 @@ test('Test GET orders', async () => {
   const productAResponse = await app.inject({
     method: 'POST',
     url: '/api/products',
-    ...productA,
+    ...formAutoContent(productA),
   })
-  const productAId = productAResponse.json().id
 
   const productBResponse = await app.inject({
     method: 'POST',
     url: '/api/products',
-    ...productB,
+    ...formAutoContent(productB),
   })
-  const productBId = productBResponse.json().id
 
-  const order = {
-    address: 'any_address',
-    addressNumber: 'any_number',
-    email: 'jaquinho@gmail.com',
-    neighborhood: 'any_neighborhood',
-    paymentMethod: 'MONEY',
-    phoneNumber: 'any_phone_number',
-    postalCode: 'any_postal_code',
-    referencePoint: 'any_reference_point',
-    products: [
-      {
-        id: productAId,
-        quantity: 1,
-      },
-      {
-        id: productBId,
-        quantity: 4,
-      },
-    ],
-  }
+  const productAId: string = productAResponse.json().id
+  const productBId: string = productBResponse.json().id
+
+  const order = createOrder([
+    { id: productAId, quantity: 10 },
+    { id: productBId, quantity: 5 },
+  ])
 
   // Act
   const orderResponse = await app.inject({
@@ -97,43 +72,27 @@ test('Test GET orders', async () => {
 
 test('Test POST order', async () => {
   // Arrange
-  const productA = createProduct({ stockQuantity: 10 })
-  const productB = createProduct({ stockQuantity: 5 })
+  const productA = createProduct({ stockQuantity: 10, price: 10 })
+  const productB = createProduct({ stockQuantity: 5, price: 10 })
 
   const productAResponse = await app.inject({
     method: 'POST',
     url: '/api/products',
-    ...productA,
+    ...formAutoContent(productA),
   })
   const productAId = productAResponse.json().id
 
   const productBResponse = await app.inject({
     method: 'POST',
     url: '/api/products',
-    ...productB,
+    ...formAutoContent(productB),
   })
   const productBId = productBResponse.json().id
 
-  const order = {
-    address: 'any_address',
-    addressNumber: 'any_number',
-    email: 'jaquinho@gmail.com',
-    neighborhood: 'any_neighborhood',
-    paymentMethod: 'MONEY',
-    phoneNumber: 'any_phone_number',
-    postalCode: 'any_postal_code',
-    referencePoint: 'any_reference_point',
-    products: [
-      {
-        id: productAId,
-        quantity: 1,
-      },
-      {
-        id: productBId,
-        quantity: 4,
-      },
-    ],
-  }
+  const order = createOrder([
+    { id: productAId, quantity: 1 },
+    { id: productBId, quantity: 4 },
+  ])
 
   // Act
   const orderResponse = await app.inject({

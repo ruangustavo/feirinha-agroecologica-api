@@ -62,6 +62,8 @@ test('Test POST products', async () => {
   })
 })
 
+// test upload image
+
 afterAll(async () => {
   await app.close()
 })
