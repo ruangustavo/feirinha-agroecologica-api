@@ -5,15 +5,31 @@ import { userRoutes } from './routes/user.route'
 
 import { userSchemas } from './schemas/user.schema'
 
+import fastfiyStatic from '@fastify/static'
+
 import { ZodError } from 'zod'
 
 import fjwt, { FastifyJWT } from '@fastify/jwt'
 import fCookie from '@fastify/cookie'
 import multipart from '@fastify/multipart'
 import { orderRoutes } from './routes/order.route'
+import path from 'path'
+
+const MEDIA_BASE_URL = process.env.SERVER_BASE_URL + '/media'
+const MEDIA_PATH = path.join(__dirname, '..', 'media')
+
+export const PRODUCT_MEDIA_BASE_PATH = path.join(MEDIA_PATH, 'products')
+export const PRODUCT_MEDIA_BASE_URL = MEDIA_BASE_URL + '/products'
+
+const PRODUCT_MEDIA_PREFIX = '/media/products'
 
 export function buildFastify(opts = {}) {
   const app = Fastify(opts)
+
+  app.register(fastfiyStatic, {
+    root: path.join(MEDIA_PATH, 'products'),
+    prefix: PRODUCT_MEDIA_PREFIX,
+  })
 
   for (const schema of [...userSchemas]) {
     app.addSchema(schema)
